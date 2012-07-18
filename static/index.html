@@ -1,10 +1,34 @@
 <!doctype html>
-<html>
+<html><head>
 
         <title>Etherpad Lite</title>
 
         <meta charset="utf-8"> 
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+
+        <script src="http://platform.twitter.com/anywhere.js?id=e987tp9GDr1qsSEN5lMRA&v=1" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script>
+          $(function() {
+            twttr.anywhere(function (T) {
+
+              var currentUser,
+                  screenName,
+                  profileImage,
+                  profileImageTag;
+
+              if (T.isConnected()) {
+                currentUser = T.currentUser;
+                screenName = currentUser.data('screen_name');
+                profileImage = currentUser.data('profile_image_url');
+                profileImageTag = "<img src='" + profileImage + "'/>";
+                $('#login').append("Logged in as " + profileImageTag + " " + screenName);
+              } else {
+                T("#login").connectButton();
+              };
+            });
+          });
+        </script>
 
         <style>
             body {
@@ -116,8 +140,11 @@
             }
         </style>
 
+</head><body>
+
         <div id="wrapper">
             <div id="inner">
+                <div id="login"></div>
                 <form action="#" onsubmit="go2Name();return false;"> 
                     <input type="text" id="padname" autofocus x-webkit-speech> 
                     <button type="submit">OK</button>
@@ -154,4 +181,4 @@
             if (typeof customStart == "function") customStart();
         </script>
 
-</html>
+</body></html>
