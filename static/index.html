@@ -29,7 +29,7 @@
                   name: user.name,
                   authorMapper: $.cookie("twitter_anywhere_identity")
                 },
-                success: function(response) {
+                function(response) {
                   $.get(
                     "/api/1/createSession",
                     {
@@ -37,7 +37,7 @@
                       authorID: response.authorID,
                       validUntil: (new Date().getTime / 1000) + (60 * 60 * 24 * 365)
                     },
-                    success: function(response) {
+                    function(response) {
                       $.cookie("sessionID", response.data.sessionID, { expires: 365 });
                     }
                   );
