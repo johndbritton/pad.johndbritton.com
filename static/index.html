@@ -35,7 +35,7 @@
                     {
                       groupID: "g.W5vFlGzsOPUyuIlF",
                       authorID: response.authorID,
-                      validUntil: (new Date().getTime / 1000) + (60 * 60 * 24 * 365)
+                      validUntil: (new Date().getTime() / 1000) + (60 * 60 * 24 * 365)
                     },
                     function(response) {
                       $.cookie("sessionID", response.data.sessionID, { expires: 365 });
