@@ -52,7 +52,7 @@ exports.defaultPadText = process.env.ETHERPAD_DEFAULT_TEXT || 'Welcome';
 /**
  * A flag that requires any user to have a valid session (via the api) before accessing a pad
  */
-exports.requireSession = false;
+exports.requireSession = true;
 
 /**
  * A flag that prevents users from creating new pads
