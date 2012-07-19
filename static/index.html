@@ -55,21 +55,21 @@
             }
           });
         };
+        $("#create").click(function(event) {
+          event.preventDefault();
+          var name = $("#name").val();
+          $.get(
+            "/api/1/createGroupPad",
+            {
+              groupID: "g.QA0EsrfqmHLSeuWu",
+              padName: name
+            },
+            function() {
+              $(location).attr('href', '/p/' + name);
+            }
+          )
+        });
       });});
-      $("#create").click(function(event) {
-        event.preventDefault();
-        var name = $("#name").val();
-        $.get(
-          "/api/1/createGroupPad",
-          {
-            groupID: "g.QA0EsrfqmHLSeuWu",
-            padName: name
-          },
-          function() {
-            $(location).attr('href', '/p/' + name);
-          }
-        )
-      });
     </script>
   </head>
   <body>
