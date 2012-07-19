@@ -23,6 +23,7 @@
         } else {
           T("#login").connectButton({
             authComplete: function(user) {
+              console.log(user);
               $.get(
                 "/api/1/createAuthorIfNotExistsFor",
                 {
@@ -30,6 +31,7 @@
                   authorMapper: $.cookie("twitter_anywhere_identity")
                 },
                 function(response) {
+                  console.log(response);
                   $.get(
                     "/api/1/createSession",
                     {
@@ -38,6 +40,7 @@
                       validUntil: (new Date().getTime() / 1000) + (60 * 60 * 24 * 365)
                     },
                     function(response) {
+                      console.log(response);
                       $.cookie("sessionID", response.data.sessionID, { expires: 365 });
                     }
                   );
