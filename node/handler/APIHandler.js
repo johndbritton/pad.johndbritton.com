@@ -38,7 +38,7 @@ var functions = {
   "createGroupPad"            : ["groupID", "padName", "text"],
   "createAuthor"              : ["name"], 
   "createAuthorIfNotExistsFor": ["authorMapper" , "name"], 
-  "createSession"             : ["groupID", "authorID", "validUntil"], 
+  "createSession"             : ["authorID", "validUntil"], 
   "deleteSession"             : ["sessionID"], 
   "getSessionInfo"            : ["sessionID"], 
   "listSessionsOfGroup"       : ["groupID"], 

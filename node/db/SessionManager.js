@@ -24,7 +24,6 @@ var customError = require("../utils/customError");
 var randomString = CommonCode.require('/pad_utils').randomString;
 var db = require("./DB").db;
 var async = require("async");
-var groupMangager = require("./GroupManager");
 var authorMangager = require("./AuthorManager");
  
 exports.doesSessionExist = function(sessionID, callback)
@@ -38,32 +37,13 @@ exports.doesSessionExist = function(sessionID, callback)
 }
  
 /**
- * Creates a new session between an author and a group
+ * Creates a new session between for an author
  */
-exports.createSession = function(groupID, authorID, validUntil, callback)
+exports.createSession = function(authorID, validUntil, callback)
 {
   var sessionID;
 
   async.series([
-    //check if group exists
-    function(callback)
-    {
-      groupMangager.doesGroupExist(groupID, function(err, exists)
-      {
-        if(ERR(err, callback)) return;
-        
-        //group does not exist
-        if(exists == false)
-        {
-          callback(new customError("groupID does not exist","apierror"));
-        }
-        //everything is fine, continue
-        else
-        {
-          callback();
-        }
-      });
-    },
     //check if author exists
     function(callback)
     {
@@ -126,32 +106,9 @@ exports.createSession = function(groupID, authorID, validUntil, callback)
       sessionID = "s." + randomString(16);
       
       //set the session into the database
-      db.set("session:" + sessionID, {"groupID": groupID, "authorID": authorID, "validUntil": validUntil});
+      db.set("session:" + sessionID, {"authorID": authorID, "validUntil": validUntil});
       
       callback();
-    },
-    //set the group2sessions entry
-    function(callback)
-    {
-      //get the entry
-      db.get("group2sessions:" + groupID, function(err, group2sessions)
-      {
-        if(ERR(err, callback)) return;
-        
-        //the entry doesn't exist so far, let's create it
-        if(group2sessions == null)
-        {
-          group2sessions = {sessionIDs : {}};
-        }
-        
-        //add the entry for this session
-        group2sessions.sessionIDs[sessionID] = 1;
-        
-        //save the new element back
-        db.set("group2sessions:" + groupID, group2sessions);
-        
-        callback();
-      });
     },
     //set the author2sessions entry
     function(callback)
@@ -210,8 +167,8 @@ exports.getSessionInfo = function(sessionID, callback)
  */
 exports.deleteSession = function(sessionID, callback)
 {
-  var authorID, groupID;
-  var group2sessions, author2sessions;
+  var authorID;
+  var author2sessions;
 
   async.series([
     function(callback)
@@ -230,20 +187,9 @@ exports.deleteSession = function(sessionID, callback)
         else
         {
           authorID = session.authorID;
-          groupID = session.groupID;
           
           callback();
         }
-      });
-    },
-    //get the group2sessions entry
-    function(callback)
-    {
-      db.get("group2sessions:" + groupID, function (err, _group2sessions)
-      {
-        if(ERR(err, callback)) return;
-        group2sessions = _group2sessions;
-        callback();
       });
     },
     //get the author2sessions entry
@@ -262,10 +208,6 @@ exports.deleteSession = function(sessionID, callback)
       //remove the session
       db.remove("session:" + sessionID);
       
-      //remove session from group2sessions
-      delete group2sessions.sessionIDs[sessionID];
-      db.set("group2sessions:" + groupID, group2sessions);
-      
       //remove session from author2sessions
       delete author2sessions.sessionIDs[sessionID];
       db.set("author2sessions:" + authorID, author2sessions);
@@ -279,32 +221,13 @@ exports.deleteSession = function(sessionID, callback)
   })
 }
 
-exports.listSessionsOfGroup = function(groupID, callback)
-{
-  groupMangager.doesGroupExist(groupID, function(err, exists)
-  {
-    if(ERR(err, callback)) return;
-    
-    //group does not exist
-    if(exists == false)
-    {
-      callback(new customError("groupID does not exist","apierror"));
-    }
-    //everything is fine, continue
-    else
-    {
-      listSessionsWithDBKey("group2sessions:" + groupID, callback);
-    }
-  });
-}
-
 exports.listSessionsOfAuthor = function(authorID, callback)
 {  
   authorMangager.doesAuthorExists(authorID, function(err, exists)
   {
     if(ERR(err, callback)) return;
     
-    //group does not exist
+    //author does not exist
     if(exists == false)
     {
       callback(new customError("authorID does not exist","apierror"));
@@ -317,7 +240,6 @@ exports.listSessionsOfAuthor = function(authorID, callback)
   });
 }
 
-//this function is basicly the code listSessionsOfAuthor and listSessionsOfGroup has in common
 function listSessionsWithDBKey (dbkey, callback)
 {
   var sessions;
@@ -325,7 +247,7 @@ function listSessionsWithDBKey (dbkey, callback)
   async.series([
     function(callback)
     {
-      //get the group2sessions entry
+      //get the <key>2sessions entry
       db.get(dbkey, function(err, sessionObject)
       {
         if(ERR(err, callback)) return;
