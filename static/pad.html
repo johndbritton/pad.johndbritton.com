@@ -290,7 +290,7 @@
               screenName = currentUser.data('screen_name');
               profileImage = currentUser.data('profile_image_url');
               profileImageTag = "<img style='height: 18px; width: 18px;' src='" + profileImage + "'/>";
-              $('#login').replaceWith("profileImageTag");
+              $('#login').html(profileImageTag);
             } else {
               T("#login").connectButton({
                 authComplete: function(user) {
