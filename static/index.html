@@ -59,13 +59,12 @@
           event.preventDefault();
           var name = $("#name").val();
           $.get(
-            "/api/1/createGroupPad",
+            "/api/1/createPad",
             {
-              groupID: "g.QA0EsrfqmHLSeuWu",
               padName: name
             },
             function() {
-              $(location).attr('href', '/p/g.QA0EsrfqmHLSeuWu$' + name);
+              $(location).attr('href', '/p/' + name);
             }
           )
         });
