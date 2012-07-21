@@ -292,7 +292,6 @@
               profileImageTag = "<img style='height: 18px; width: 18px;' src='" + profileImage + "'/>";
               $('#login').replaceWith("profileImageTag");
             } else {
-              $("#login").css("border", 0).css("padding", 0);
               T("#login").connectButton({
                 authComplete: function(user) {
                   console.log(user);
@@ -320,6 +319,7 @@
                   );
                 }
               });
+              $("#login").css("border", 0).css("padding", 0).css("margin-top", 3).css("width", 146).css("height", 23);
             };
           });});
         </script>
