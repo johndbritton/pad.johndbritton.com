@@ -9,6 +9,53 @@
 
         <link href="../static/css/pad.css" rel="stylesheet">
         <style title="dynamicsyntax"></style>
+        <script src="http://platform.twitter.com/anywhere.js?id=e987tp9GDr1qsSEN5lMRA&v=1" type="text/javascript"></script>
+
+        <script>
+          $(function() {
+            twttr.anywhere(function (T) {
+            var currentUser,
+                screenName,
+                profileImage,
+                profileImageTag;
+
+            if (T.isConnected()) {
+              currentUser = T.currentUser;
+              screenName = currentUser.data('screen_name');
+              profileImage = currentUser.data('profile_image_url');
+              profileImageTag = "<img src='" + profileImage + "'/>";
+              $('#login').replaceWith(profileImageTag);
+            } else {
+              T("#login").connectButton({
+                authComplete: function(user) {
+                  console.log(user);
+                  $.get(
+                    "/api/1/createAuthorIfNotExistsFor",
+                    {
+                      name: user.name,
+                      authorMapper: $.cookie("twitter_anywhere_identity")
+                    },
+                    function(response) {
+                      console.log(response);
+                      $.get(
+                        "/api/1/createSession",
+                        {
+                          authorID: response.data.authorID,
+                          validUntil: (new Date().getTime() / 1000) + (60 * 60 * 24 * 365)
+                        },
+                        function(response) {
+                          console.log(response);
+                          $.cookie("sessionID", response.data.sessionID, { expires: 365 });
+                          location.reload();
+                        }
+                      );
+                    }
+                  );
+                }
+              });
+            };
+          });});
+        </script>
 
         <!-- head and body had been removed intentionally -->
 
@@ -52,6 +99,9 @@
                 </li>
             </ul>    
             <ul id="menu_right">
+                <li id="login">
+                  
+                </li>
                 <li id="settingslink" onClick="window.pad&amp;&amp;pad.editbarClick('settings');return false;">
                     <a class="buttonicon buttonicon-settings" id="settingslink" title="Settings of this pad"></a>
                 </li>
