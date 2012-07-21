@@ -53,7 +53,8 @@ var functions = {
 //  "setPublicStatus"           : ["padID", "publicStatus"], 
 //  "getPublicStatus"           : ["padID"], 
 //  "setPassword"               : ["padID", "password"], 
-//  "isPasswordProtected"       : ["padID"]
+//  "isPasswordProtected"       : ["padID"],
+  "listPadsOfAuthor"            : ["authorID"]
 };
 
 /**

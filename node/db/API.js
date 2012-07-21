@@ -47,6 +47,7 @@ exports.createGroupPad = groupManager.createGroupPad;
 
 exports.createAuthor = authorManager.createAuthor;
 exports.createAuthorIfNotExistsFor = authorManager.createAuthorIfNotExistsFor;
+exports.listPadsOfAuthor = authorManager.listPadsOfAuthor;
 
 /**********************/
 /**SESSION FUNCTIONS***/

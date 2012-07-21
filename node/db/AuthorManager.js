@@ -179,3 +179,88 @@ exports.setAuthorName = function (author, name, callback)
 {
   db.setSub("globalAuthor:" + author, ["name"], name, callback);
 }
+
+/**
+ * Returns an array of all pads this author contributed to
+ * @param {String} author The id of the author
+ * @param {Function} callback (optional)
+ */
+exports.listPadsOfAuthor = function (authorID, callback)
+{
+  /* There are two other places where this array is manipulated:
+   * (1) When the author is added to a pad, the author object is also updated
+   * (2) When a pad is deleted, each author of that pad is also updated
+   */
+  //get the globalAuthor
+  db.get("globalAuthor:" + authorID, function(err, author)
+  {
+    if(ERR(err, callback)) return;
+
+    //author does not exists
+    if(author == null)
+    {
+      callback(new customError("authorID does not exist","apierror"))
+    }
+    //everything is fine, return the pad IDs
+    else
+    {     
+      var pads = [];
+      if(author.padIDs != null)
+      {
+        for (var padId in author.padIDs)
+        {
+          pads.push(padId);
+        }
+      }
+      callback(null, {padIDs: pads});
+    }
+  });
+}
+
+/**
+ * Adds a new pad to the list of contributions
+ * @param {String} author The id of the author
+ * @param {String} padID The id of the pad the author contributes to
+ */
+exports.addPad = function (authorID, padID)
+{
+  //get the entry
+  db.get("globalAuthor:" + authorID, function(err, author)
+  {
+    if(ERR(err)) return;
+    if(author == null) return;
+    
+    //the entry doesn't exist so far, let's create it
+    if(author.padIDs == null)
+    {
+      author.padIDs = {};
+    }
+      
+    //add the entry for this pad
+    author.padIDs[padID] = 1;// anything, because value is not used
+      
+    //save the new element back
+    db.set("globalAuthor:" + authorID, author);
+  });
+}
+
+/**
+ * Removes a pad from the list of contributions
+ * @param {String} author The id of the author
+ * @param {String} padID The id of the pad the author contributes to
+ */
+exports.removePad = function (authorID, padID)
+{
+  db.get("globalAuthor:" + authorID, function (err, author)
+  {
+    if(ERR(err)) return;
+    if(author == null) return;
+    
+    if(author.padIDs != null)
+    {
+      //remove pad from author
+      delete author.padIDs[padID];   
+      db.set("globalAuthor:" + authorID, author);
+    }
+  });
+}
