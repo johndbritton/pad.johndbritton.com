@@ -52,9 +52,7 @@
                 </li>
             </ul>    
             <ul id="menu_right">
-                <li>
-                  <div id="login"></div>
-                </li>
+                <div id="login"></div>
                 <li id="settingslink" onClick="window.pad&amp;&amp;pad.editbarClick('settings');return false;">
                     <a class="buttonicon buttonicon-settings" id="settingslink" title="Settings of this pad"></a>
                 </li>
@@ -291,8 +289,8 @@
               currentUser = T.currentUser;
               screenName = currentUser.data('screen_name');
               profileImage = currentUser.data('profile_image_url');
-              profileImageTag = "<img src='" + profileImage + "'/>";
-              $('#login').replaceWith(profileImageTag);
+              profileImageTag = "<img style='height: 18px; width: 18px;' src='" + profileImage + "'/>";
+              $('#login').replaceWith("<li>" + profileImageTag + "</li>");
             } else {
               T("#login").connectButton({
                 authComplete: function(user) {
