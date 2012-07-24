@@ -199,7 +199,7 @@ exports.listPadsOfAuthor = function (authorID, callback)
     //author does not exists
     if(author == null)
     {
-      callback(new customError("authorID does not exist","apierror"))
+      callback(new Error("authorID does not exist","apierror"))
     }
     //everything is fine, return the pad IDs
     else
