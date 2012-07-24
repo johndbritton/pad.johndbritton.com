@@ -3,11 +3,16 @@
   <head>
     <title>Etherpad Lite</title>
 
+    <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Actor' rel='stylesheet' type='text/css'>
+
     <script src="http://platform.twitter.com/anywhere.js?id=e987tp9GDr1qsSEN5lMRA&v=1" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/riklomas/quicksearch/f984f7f92ed8f24ef6d8aec0d47724eaf6f246ce/jquery.quicksearch.js"></script>
     <script>
-      $(function() {
+      $(        
+        function() {
         twttr.anywhere(function (T) {
         var currentUser,
             screenName,
@@ -41,6 +46,14 @@
                     function(response) {
                       console.log(response);
                       $.cookie("sessionID", response.data.sessionID, { expires: 365 });
+                      $.get('/api/1/listPadsOfAuthor', {authorID: 'a.iDFZogLWtC3u7yqa'},
+                        function(response) {
+                          console.log(response.data.padIDs);
+                          $.each(response.data.padIDs, function(index, name){
+                            $("#list").append("<li class='pad'><a href='/" + name + "'>"+ name +"</a></li>");
+                          });
+                        }
+                      );
                     }
                   );
                 }
@@ -56,10 +69,28 @@
         };
       });});
     </script>
+    
+    <style type="text/css">
+     body{margin: auto; text-align: center;}
+     #search{font-size: 4em; font-family: 'Arvo', serif;}
+     ul{margin: 0; padding: 0;}
+     li{font-size: 2em; list-style-type: none; margin: 20px 0; font-family: 'Actor', sans-serif;}
+     a{text-decoration: none; color: #000;}
+     a:hover {background-color: yellow;}
+     a:hover:after {content: ' \00bb';}
+    </style>
   </head>
+
   <body>
     <div id="container">
       <div id="login"></div>
+      <form>
+        <input type="text" id="search" placeholder="padsearch">
+      </form>
+      <ul id="list"></ul>
+      <script type="text/javascript">
+        $('input#search').quicksearch('li');
+      </script>
     </div>
   </body>
 </html>
