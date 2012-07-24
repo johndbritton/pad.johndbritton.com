@@ -30,7 +30,7 @@
           screenName = currentUser.data('screen_name');
           profileImage = currentUser.data('profile_image_url');
           profileImageTag = "<img src='" + profileImage + "'/>";
-          $('#login').append("Logged in as " + profileImageTag + " " + screenName);
+          $('#login').html("Logged in as " + profileImageTag + " " + screenName);
           
           $.get("/api/1/getSessionInfo", {sessionID: $.cookie("sessionID")}, function(session){
             $.get('/api/1/listPadsOfAuthor', {authorID: session.data.authorID}, function(pads) {
@@ -75,7 +75,7 @@
               screenName = currentUser.data('screen_name');
               profileImage = currentUser.data('profile_image_url');
               profileImageTag = "<img src='" + profileImage + "'/>";
-              $('#login').append("Logged in as " + profileImageTag + " " + screenName);
+              $('#login').html("Logged in as " + profileImageTag + " " + screenName);
             }
           });
         };
