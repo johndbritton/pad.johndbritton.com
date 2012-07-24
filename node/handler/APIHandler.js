@@ -40,7 +40,7 @@ var functions = {
   "createAuthorIfNotExistsFor": ["authorMapper" , "name"], 
   "createSession"             : ["authorID", "validUntil"], 
 //  "deleteSession"             : ["sessionID"], 
-//  "getSessionInfo"            : ["sessionID"], 
+  "getSessionInfo"            : ["sessionID"], 
 //  "listSessionsOfGroup"       : ["groupID"], 
 //  "listSessionsOfAuthor"      : ["authorID"], 
 //  "getText"                   : ["padID", "rev"],

@@ -11,7 +11,13 @@
     <script src="/static/js/jquery.cookie.js"></script>
     <script type="text/javascript" src="https://raw.github.com/riklomas/quicksearch/f984f7f92ed8f24ef6d8aec0d47724eaf6f246ce/jquery.quicksearch.js"></script>
     <script>
-      $(        
+      var displayPads = function(pads) {
+        $.each(pads, function(index, name){
+          $("#list").append("<li class='pad'><a href='/" + name + "'>"+ name +"</a></li>");
+        });
+        $('input#search').quicksearch('li');
+      }
+      $(
         function() {
         twttr.anywhere(function (T) {
         var currentUser,
@@ -25,6 +31,15 @@
           profileImage = currentUser.data('profile_image_url');
           profileImageTag = "<img src='" + profileImage + "'/>";
           $('#login').append("Logged in as " + profileImageTag + " " + screenName);
+          
+          $.get("/api/1/getSessionInfo", {sessionID: $.cookie("sessionID")}, function(session){
+            $.get('/api/1/listPadsOfAuthor', {authorID: session.data.authorID}, function(pads) {
+                console.log(pads.data.padIDs);
+                displayPads(pads.data.padIDs);
+              }
+            );
+          });
+          
         } else {
           T("#login").connectButton({
             authComplete: function(user) {
@@ -35,23 +50,20 @@
                   name: user.name,
                   authorMapper: $.cookie("twitter_anywhere_identity")
                 },
-                function(response) {
-                  console.log(response);
+                function(author) {
+                  console.log(author);
                   $.get(
                     "/api/1/createSession",
                     {
-                      authorID: response.data.authorID,
+                      authorID: author.data.authorID,
                       validUntil: (new Date().getTime() / 1000) + (60 * 60 * 24 * 365)
                     },
-                    function(response) {
-                      console.log(response);
-                      $.cookie("sessionID", response.data.sessionID, { expires: 365 });
-                      $.get('/api/1/listPadsOfAuthor', {authorID: 'a.iDFZogLWtC3u7yqa'},
-                        function(response) {
-                          console.log(response.data.padIDs);
-                          $.each(response.data.padIDs, function(index, name){
-                            $("#list").append("<li class='pad'><a href='/" + name + "'>"+ name +"</a></li>");
-                          });
+                    function(session) {
+                      console.log(session);
+                      $.cookie("sessionID", session.data.sessionID, { expires: 365 });
+                      $.get('/api/1/listPadsOfAuthor', {authorID: author.data.authorID}, function(pads) {
+                          console.log(pads.data.padIDs);
+                          displayPads(pads.data.padIDs);
                         }
                       );
                     }
@@ -88,9 +100,6 @@
         <input type="text" id="search" placeholder="padsearch">
       </form>
       <ul id="list"></ul>
-      <script type="text/javascript">
-        $('input#search').quicksearch('li');
-      </script>
     </div>
   </body>
 </html>
